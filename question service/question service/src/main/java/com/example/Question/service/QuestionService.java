@@ -86,7 +86,7 @@ public class QuestionService {
                     ques.getOption3(), ques.getOption4()) );
         }
 
-        return new ResponseEntity<>(quizQuestions,HttpStatus.FOUND);
+        return new ResponseEntity<>(quizQuestions,HttpStatus.OK);
     }
 
     public ResponseEntity<Integer> getScore(List<Response> responses) {

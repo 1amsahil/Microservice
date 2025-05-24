@@ -1,6 +1,5 @@
 package com.eternity.quiz.service.service;
 
-
 import com.eternity.quiz.service.feign.QuizInterface;
 import com.eternity.quiz.service.repo.QuizRepo;
 import com.eternity.quiz.service.entity.Quiz;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,39 +33,16 @@ public class QuizService {
         return new ResponseEntity<>("Successfully Created", HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> getQuiz(int id)
+    public ResponseEntity<List<QuizQuestions>> getQuiz(int id)
     {
         Optional<Quiz> quiz = quizRepo.findById(id);
-
-        List<QuizQuestions> quizQuestions = new ArrayList<>();
-//        for(Question q : questionsFromDB)
-//        {
-//            QuizQuestions ques = new QuizQuestions(q.getId(), q.getQuestionTitle(),
-//                    q.getOption1(), q.getOption2(), q.getOption3(), q.getOption4());
-//
-//            quizQuestions.add(ques);
-//        }
-
-        return new ResponseEntity<>(quizQuestions,HttpStatus.OK);
+        List<Integer> questionsIds = quiz.get().getQuestionIds();
+        ResponseEntity<List<QuizQuestions>> questions = quizInterface.getQuestionsFromId(questionsIds);
+        return questions;
     }
 
-    public ResponseEntity<Integer> calculate(Integer id, List<Response> responses) {
-        Quiz quiz = quizRepo.findById(id).get();
-//        List<Question> ques = quiz.getQuestions();
-//
-//        System.out.println(ques);
-//        System.out.println("Response : - "+responses);
-//
-        int right = 0;
-//        int index = 0;
-//        for(Response response : responses)
-//        {
-//            if(response.getResponse().equals(ques.get(index).getRightAnswer()))
-//            {
-//                right++;
-//            }
-//            index++;
-//        }
-        return new ResponseEntity<>(right,HttpStatus.OK);
+    public ResponseEntity<Integer> calculate(List<Response> responses) {
+        ResponseEntity<Integer> score = quizInterface.getScore(responses);
+        return score;
     }
 }
